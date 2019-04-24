@@ -9,9 +9,14 @@
 import SpriteKit
 import GameplayKit
 
+let ballCategory: UInt32 = 1
+let topCategory: UInt32 = 2
+let paddleCategory: UInt32 = 4 // 0x1 << 5
+
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
     var topPaddle = SKSpriteNode()
+    var ball = SKSpriteNode()
     
     override func didMove(to view: SKView) {
         let border = SKPhysicsBody(edgeLoopFrom: self.frame)
@@ -22,16 +27,26 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         physicsWorld.contactDelegate = self
         
         topPaddle = self.childNode(withName: "topPaddle") as! SKSpriteNode
+        ball = self.childNode(withName: "ball") as! SKSpriteNode
         
         let topLeft = CGPoint(x: frame.origin.x, y: -frame.origin.y)
         let topRight = CGPoint(x: -frame.origin.x, y: -frame.origin.y)
+        
         let top = SKNode()
         top.name = "top"
         top.physicsBody = SKPhysicsBody(edgeFrom: topLeft, to: topRight)
         self.addChild(top)
+        
+        topPaddle.physicsBody?.categoryBitMask = paddleCategory
+        ball.physicsBody?.categoryBitMask = ballCategory
+        top.physicsBody?.categoryBitMask = topCategory
+        
+        ball.physicsBody?.contactTestBitMask = topCategory|paddleCategory
         }
     
     func didBegin(_ contact: SKPhysicsContact) {
+        print(contact.bodyA.node?.name)
+        print(contact.bodyB.node?.name)
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
