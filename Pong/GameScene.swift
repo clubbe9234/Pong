@@ -31,6 +31,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         let topLeft = CGPoint(x: frame.origin.x, y: -frame.origin.y)
         let topRight = CGPoint(x: -frame.origin.x, y: -frame.origin.y)
+        let bottomLeft = CGPoint(x: frame.origin.x, y: frame.origin.y)
+        let bottomRight = CGPoint(x: -frame.origin.x, y: frame.origin.y)
         
         let top = SKNode()
         top.name = "top"
@@ -45,8 +47,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     
     func didBegin(_ contact: SKPhysicsContact) {
-        print(contact.bodyA.node?.name)
-        print(contact.bodyB.node?.name)
+        if contact.bodyA.categoryBitMask == topCategory {
+            changePaddle(node: topPaddle)
+        }
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -59,5 +62,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let touch = touches.first!
         let location = touch.location(in: self)
         topPaddle.run(SKAction.moveTo(x: location.x, duration: 0.2))
+    }
+    
+    func changePaddle(node: SKSpriteNode) {
+        if node.color == .yellow {
+            node.removeAllActions()
+            node.removeFromParent()
+        }
+        node.color = .yellow
     }
 }
